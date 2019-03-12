@@ -15,35 +15,44 @@
   //   - テキストボックスに入力されたテキストをTodoリスト一覧に追加する
   //   - テキストボックスの中を空にする
   addButton.addEventListener("click", event => {
-    todoList.push(inputText.value);
-    showList();
-    inputText.value = "";
+    const todoItem = inputText.value;
+
+    if (todoItem) {
+      todoList.push(todoItem);
+      inputText.value = "";
+      showList();
+    }
   });
 
   // 「todos」の中身を一覧表示する
   //    - ul要素にli要素を追加して、li要素内にtodoタスクの内容を表示する
   //    - li要素内に削除ボタンを配置して、削除ボタンをクリックしたら対応するタスクを削除する
   function showList() {
-    if (inputText.value) {
+    while (ulElement.firstChild) {
+      ulElement.removeChild(ulElement.firstChild);
+    }
+
+    todoList.forEach((todoItem, index) => {
       const liElement = document.createElement("li");
-      const index = todoList.indexOf(inputText.value);
-      liElement.textContent = `${index + 1}: ${inputText.value}`;
+      liElement.textContent = `${index + 1}: ${todoItem}`;
       ulElement.appendChild(liElement);
 
       const deleteButtonElement = document.createElement("button");
       deleteButtonElement.textContent = "削除";
       liElement.appendChild(deleteButtonElement);
-
       deleteButtonElement.addEventListener("click", event => {
-        todoList.splice(index, 1);
-        const deletedTodoElement = ulElement.children[index];
-        ulElement.removeChild(deletedTodoElement);
+        deleteItem(index);
       });
-    }
+    });
   }
 
   // Todo情報を表すli要素(showTodo関数で作成される要素)の中にある削除ボタンをクリックしたら実行される。
   //   - todosから対応するtodo情報を削除する
   //   - 引数はindexを受け取る(インデックス番号)
   //   - 削除後はshowTodosを実行して、Todoリストを整理する
+
+  function deleteItem(index) {
+    todoList.splice(index, 1);
+    showList();
+  }
 })();
